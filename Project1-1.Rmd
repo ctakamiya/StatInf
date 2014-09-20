@@ -1,0 +1,66 @@
+---
+title: "Project 1/1 - Statistic Inference"
+author: "ctakamiya"
+date: "September 14, 2014"
+output: pdf_document
+---
+# 1 Simulation exercises
+
+In this part of Project the Exponential Distribution is simulated.
+The exponential distribution mean is $1 / {\lambda}$ and the standard 
+deviation is also $1 / {\lambda}$. The simultation make use of 
+rexp(n, lambda) function that generates a random exponential distribution with 
+rate lambda (i.e, mean = 1/lambda). 
+Instructions for this project specifies ${\lambda}$ = 0.2 parameter
+to simulation. 
+The simulation do a 1000 simultated averages of 40 exponential(0.2)s. 
+```{r}
+n <- 40
+nosim <- 1000
+lambda <- 0.2
+meansExp <- rowSums(matrix(rexp(n*nosim, rate=lambda), nosim)) / n
+meanDist <- mean(meansExp)
+meanDist
+```
+1 - This distribution is centered at: `r meanDist`. 
+Theoretical center of this distribution is around the population mean,
+E[$\bar{X}$] = $\mu$ = $1 / {\lambda}$ = $\frac{1}{`r lambda`}$ = `r 1/lambda`,
+
+2 - The standard deviation (${\sigma}$) of exponential distribution is $\frac{1}{\lambda}$. Where 
+${\lambda}=0.2$.
+```{r}
+sigma = 1 / 0.2
+sigma
+```
+So we can conclude that the variation is ${\sigma}^2 =$ `r sigma ^ 2 `. 
+The theoritical value of variation of distribution means is 
+$\frac{{\sigma} ^ 2}{n}$. The logical estimation
+is $\frac{S^2}{n} =\frac{`r sigma ^ 2`}{`r n`} = `r (sigma ^ 2 ) / n` $.
+By simulation we can confirm this value is very close to variance.
+```{r}
+var(meansExp)
+```
+
+3 - The normal curve drawn below shows that the distribution is approximately 
+normal.
+
+```{r fig.width=5, fig.height=3}
+library(ggplot2)
+df <- data.frame(meansExp)
+ggplot(df, aes(x=df$meansExp)) + 
+     geom_histogram(aes(y=..density..),     
+                    binwidth=.5,
+                    colour="black", fill="white") +
+        stat_function(fun = dnorm, colour = "red", 
+                      arg = list(mean=5, sd=sigma/sqrt(n))) +
+        labs(x= "x")
+```
+
+4 - The interval confidence $\bar{X} \pm 1.96 \frac{S}{\sqrt(n)}$ is called 95%
+interval for ${\mu}$ and the interval is [`r meanDist - 1.96 * sd(meansExp) / sqrt(n)`, 
+`r meanDist + 1.96 * sd(meansExp) / sqrt(n)` ]. This represents that about 95% 
+of intervals obtained would contain ${\mu}$.
+
+
+
+

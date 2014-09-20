@@ -1,0 +1,58 @@
+---
+title: "Project 1/2 - Statistic Inference"
+author: "ctakamiya"
+date: "September 14, 2014"
+output: pdf_document
+---
+
+#1 - Loading the ToothGrowth data and performing some basic exploratory data analyses 
+
+```{r}
+data (ToothGrowth)
+str(ToothGrowth)
+head(ToothGrowth)
+tail(ToothGrowth)
+```
+
+#2 - A basic summary of the data.
+Average of length by type supplementar
+```{r}
+summary(ToothGrowth[ToothGrowth$supp=="OJ",]$len)
+summary(ToothGrowth[ToothGrowth$supp=="VC",]$len)
+```
+
+#3 - Using confidence intervals and hypothesis tests to compare tooth growth by supp and dose.
+After initial exploratory data analysis, this data provide an intuition about 
+the difference between OJ and VC averages in length. In another words, 
+${\mu}_{OJ}  > {\mu}_{VC}$ or ${\mu}_{OJ}  - {\mu}_{VC} > 0$.
+This test is not paired data, because the observations are independent.
+
+$H_0: {\mu}_{OJ}  - {\mu}_{VC} = 0$ - There is no difference in length averages.
+
+$H_A: {\mu}_{OJ}  - {\mu}_{VC} \neq 0$ - There is a difference in length averages.
+
+```{r}
+t.test(ToothGrowth[ToothGrowth$supp=="OJ",]$len, 
+       ToothGrowth[ToothGrowth$supp=="VC",]$len,
+       var.equal = FALSE)
+```
+# 4 Conclusions
+The result in part 3 shows that there is no difference in length averages. Using
+Confidence Interval (95%) we can verify that 0 (zero) is in the interval. Or by
+significance ${\alpha} = 0.05$ and p-value > 0.05 (p-value=0.06063), we fail to 
+reject $H_0$.
+In another word, this data do not provide convincing evidence that OJ promotes 
+more growth of  tooth length.
+
+# Appendix
+```{r fig.width=6, fig.height=4}
+library(ggplot2)
+qplot(len, data = ToothGrowth, facets=~supp, binwidth=3)
+```
+
+
+```{r fig.width=6, fig.height=4}
+library(graphics)
+coplot(len ~ dose | supp, data = ToothGrowth, panel = panel.smooth,
+       xlab = "ToothGrowth data: length vs dose, given type of supplement")
+```
